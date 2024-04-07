@@ -1,0 +1,3 @@
+git remote add origin https://github.com/hiluluk182003/Running-Bro.git
+git branch -M main
+git push -u origin main

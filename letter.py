@@ -1,27 +1,29 @@
 import pygame
 import random
 
-class Letter:
-    """
-    Class đại diện cho mỗi chữ cái trong trò chơi.
-    """
-
-    def __init__(self, lane):
-        """
-        Khởi tạo một đối tượng Letter với lane và tốc độ di chuyển.
-        """
-        self.letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+class Letter(pygame.sprite.Sprite):
+    def __init__(self, mbappe_rect, speed, letters_group, all_sprites):
+        super().__init__()
+        self.letters_group = letters_group
+        self.all_sprites = all_sprites
+        self.mbappe_rect = mbappe_rect
+        self.speed = speed
+        self.letter = random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
         self.font = pygame.font.SysFont(None, 50)
         self.WHITE = (255, 255, 255)
-        self.letter_images = {letter: self.font.render(letter, True, self.WHITE) for letter in self.letters}
-        self.letter = random.choice(self.letters)
-        self.image = self.letter_images[self.letter]
-        self.speed = 1
-        self.lane = lane
-        self.rect = self.image.get_rect(midbottom=(1000, self.lane))
+        self.image = self.font.render(self.letter, True, self.WHITE)
+        self.ranged = random.choice([400, 480, 560])
+        self.rect = self.image.get_rect(midbottom=(1000, self.ranged))
+        self.spacing = 20  # Khoảng cách giữa các chữ cái
 
     def update(self):
-        """
-        Cập nhật vị trí của chữ cái dựa trên tốc độ di chuyển.
-        """
         self.rect.x -= self.speed
+        if self.rect.right < 0:
+            self.kill()
+
+        # Kiểm tra va chạm với các chữ cái khác và xử lý vị trí
+        for letter in self.letters_group:
+            if self.rect.colliderect(letter.rect) and self != letter:
+                # Đặt vị trí của chữ cái hiện tại ngay sau chữ cái khác
+                self.rect.right = letter.rect.left - self.spacing
+                break
