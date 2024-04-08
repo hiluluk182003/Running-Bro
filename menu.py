@@ -41,6 +41,9 @@ class Menu:
                         if level_rect.collidepoint(x, y):
                             running = False
                             break
+            # Vẽ các cấp độ lên màn hình
+            for i, level in enumerate(self.levels):
+                self.draw_text(level["name"], self.FONT, self.WHITE, 50, 50 + 50 * i)
 
             pygame.display.flip()
             self.clock.tick(60)
@@ -49,7 +52,7 @@ class Menu:
         running = True
         while running:
             self.screen.blit(self.BG, (0, 0))
-            self.draw_text(f"You've earned {stars} stars!", self.FONT, self.WHITE, self.WIDTH // 2, self.HEIGHT // 2)
+            self.draw_text(f"You've earned {stars} stars!", self.FONT, self.WHITE, 350, self.HEIGHT // 2)
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
