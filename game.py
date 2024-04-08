@@ -3,7 +3,7 @@ from pygame.sprite import Group
 from character import Character
 from letter import Letter
 from menu import Menu
-
+import sys
 class Game:
     def __init__(self):
         self.WIDTH = 1000
@@ -23,8 +23,6 @@ class Game:
         self.lives = 3
         self.game_over_image = pygame.image.load(r"images/GO.jpg").convert_alpha()
         self.game_over_image = pygame.transform.scale(self.game_over_image, (self.WIDTH, self.HEIGHT))
-        self.clock_image = self.FONT.render("00:00", True, self.WHITE)
-        self.clock_rect = self.clock_image.get_rect(center=(500, 50))
         self.level_status = {}  # Trạng thái của các cấp độ
         self.menu = Menu(self.window, self)
         self.time_elapsed = 0
@@ -36,11 +34,6 @@ class Game:
         text_rect.topleft = (x, y)
         self.window.blit(text_surface, text_rect)
 
-    def update_clock(self):
-        current_time = pygame.time.get_ticks() // 1000
-        seconds = current_time % 60
-        self.clock_image = self.FONT.render(f"{seconds}S", True, self.WHITE)
-        self.clock_rect = self.clock_image.get_rect(center=(500, 50))
 
     def run(self):
         running = True
@@ -67,7 +60,6 @@ class Game:
 
                 hits = pygame.sprite.spritecollide(self.mbappe, self.letters_group, True)
                 if hits:
-                    print("Hit!")
                     self.lives -= 1
                     if self.lives <= 0:
                         self.game_over = True
@@ -89,18 +81,18 @@ class Game:
                     self.lives = 3  # Reset số mạng
                     self.game_over = False  # Reset trạng thái game over
                     self.reset_game()  # Khởi tạo lại trò chơi
-                elif self.time_elapsed >= 30: 
-                    stars = max(0, self.lives)  # Tính số sao dựa trên số mạng còn lại
-                    self.menu.run(stars)  # Hiển thị menu và truyền số sao
-                    if stars > 0:
-                        self.level_status[len(self.level_status) + 1] = stars  # Cập nhật trạng thái số sao cho cấp độ tiếp theo
+                elif self.time_elapsed >= 30:
+                    stars = min(3, self.lives)  # Số sao tối đa là 3
+                    self.menu.display_stars(stars)  # Hiển thị màn hình số sao
+                    pygame.display.flip()
+                    pygame.time.delay(3000)  # Delay 3 giây trước khi trở lại menu
+                    self.menu.run(stars)  # Trở lại menu với số sao
                     self.time_elapsed = 0  # Reset thời gian đã trôi qua
                     self.lives = 3  # Reset số mạng
                     self.game_over = False  # Reset trạng thái game over
                     self.reset_game()  # Khởi tạo lại trò chơi
-                else:
-                    self.update_clock()
-                    self.window.blit(self.clock_image, self.clock_rect)
+
+
 
                 pygame.display.flip()
     
@@ -111,4 +103,15 @@ class Game:
         self.all_sprites.add(self.mbappe)  # Thêm nhân vật vào nhóm sprite
         self.lives = 3  # Reset số mạng
         self.time_elapsed = 0  # Reset thời gian đã trôi qua
-        self.update_clock()
+    def display_stars(self, stars):
+        running = True
+        while running:
+            self.screen.blit(self.BG, (0, 0))
+            self.draw_text(f"You've earned {stars} stars!", self.FONT, self.WHITE, self.WIDTH // 2, self.HEIGHT // 2)
+            pygame.display.flip()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    running = False

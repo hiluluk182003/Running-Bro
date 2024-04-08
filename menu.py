@@ -11,7 +11,6 @@ class Menu:
         self.WHITE = (255, 255, 255)
         self.FONT = pygame.font.SysFont(None, 36)
         self.clock = pygame.time.Clock()
-        # Các cấp độ sẽ được lưu trong một danh sách
         self.levels = [
             {"name": "Level 1"},
             {"name": "Level 2"},
@@ -40,16 +39,21 @@ class Menu:
                     for i, level in enumerate(self.levels):
                         level_rect = pygame.Rect(50, 50 + 50 * i, 200, 40)
                         if level_rect.collidepoint(x, y):
-                            print(f"Selected level: {i+1}")
                             running = False
                             break
 
-            for i, level in enumerate(self.levels):
-                text = f"{level['name']}"
-                if i + 1 in range(1, len(self.game.level_status) + 2):
-                    stars = self.game.level_status.get(i + 1, 0)
-                    text += " " + "★" * stars
-                self.draw_text(text, self.FONT, self.WHITE, 50, 50 + 50 * i)
-
             pygame.display.flip()
             self.clock.tick(60)
+
+    def display_stars(self, stars):
+        running = True
+        while running:
+            self.screen.blit(self.BG, (0, 0))
+            self.draw_text(f"You've earned {stars} stars!", self.FONT, self.WHITE, self.WIDTH // 2, self.HEIGHT // 2)
+            pygame.display.flip()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    running = False
