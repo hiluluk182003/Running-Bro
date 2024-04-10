@@ -90,7 +90,6 @@ class Game:
                     pygame.time.delay(1000)  # Delay 2 giây trước khi quay lại menu
                     stars = 0  # Đặt số sao thành 0 khi game over
                     self.menu.run(stars)  # Quay lại màn hình Menu
-                    self.time_elapsed = 0  # Reset thời gian đã trôi qua
                     self.game_over = False  # Reset trạng thái game over
                     self.reset_game()  # Khởi tạo lại trò chơi
                 elif self.time_elapsed >= 30:
@@ -99,7 +98,6 @@ class Game:
                     pygame.display.flip()
                     pygame.time.delay(3000)  # Delay 3 giây trước khi trở lại menu
                     self.menu.run(stars)  # Trở lại menu với số sao
-                    self.time_elapsed = 0  # Reset thời gian đã trôi qua
                     self.game_over = False  # Reset trạng thái game over
                     self.reset_game()  # Khởi tạo lại trò chơi
 
