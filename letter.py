@@ -1,6 +1,8 @@
 import pygame
 import random
-
+'''
+Khởi tạo các chữ
+'''
 class Letter(pygame.sprite.Sprite):
     def __init__(self, mbappe_rect, speed, letters_group, all_sprites):
         super().__init__()

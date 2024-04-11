@@ -24,7 +24,7 @@ class Menu:
             {"name": "Level 9"},
             {"name": "Level 10"},
         ]
-
+ 
     def draw_text(self, text, font, color, x, y):
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect(topleft=(x, y))
@@ -46,27 +46,12 @@ class Menu:
                             running = False
                             break
             
-            # Vẽ các cấp độ lên màn hình
             for i, level in enumerate(self.levels):
                 self.draw_text(level["name"], self.FONT, self.WHITE, 50, 50 + 50 * i)
 
             pygame.display.flip()
             self.clock.tick(60)
 
-        # Gọi phương thức display_stars với số sao tương ứng
-        self.display_stars(stars)
+        return stars  # Trả về số sao đạt được để chuyển cho phương thức run của Game
 
-    def display_stars(self, stars):
-        self.screen.blit(self.BG, (0, 0))
-        self.draw_text(f"You've earned {stars} stars!", self.FONT, self.WHITE, 350, self.HEIGHT // 2)
-        # Vẽ số sao tương ứng
-        star_width = self.STAR_IMAGE.get_width()
-        for i in range(stars):
-            self.screen.blit(self.STAR_IMAGE, (self.WIDTH // 2 + i * (star_width + 10), self.HEIGHT // 2 + 50))
-        pygame.display.flip()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                return
+

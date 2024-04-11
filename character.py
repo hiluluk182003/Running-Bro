@@ -1,5 +1,7 @@
 import pygame
-
+'''
+Khởi tạo nhân vật
+'''
 class Character(pygame.sprite.Sprite):
     def __init__(self, all_sprites):
         super().__init__()
