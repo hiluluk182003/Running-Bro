@@ -29,6 +29,7 @@ class Game:
         self.menu = Menu(self.window, self)
         self.game_over = False
         self.start_time = 0  # Thời gian bắt đầu chơi
+        self.progress_bar_width = 0  # Chiều rộng của thanh tiến trình
 
     def draw_text(self, text, font, color, x, y):
         text_surface = font.render(text, True, color)
@@ -71,7 +72,6 @@ class Game:
                 self.draw_text(f"Lives: {self.lives}", self.FONT, self.WHITE, 10, 50)
                 
                 if self.game_over:
-<<<<<<< HEAD
                     self.window.blit(self.game_over_image, (0, 0))
                     pygame.display.flip()
                     pygame.time.delay(1000)
@@ -81,9 +81,12 @@ class Game:
                     self.reset_game()
                 else:
                     if self.start_time != 0:  # Chỉ tính thời gian khi đã bắt đầu chơi
-                        current_time = pygame.time.get_ticks()
+                        current_time = pygame.time.get_ticks() # Thời gian trôi qua khi bắt đầu game
                         elapsed_time = (current_time - self.start_time) / 1000
-                        if elapsed_time >= 30:
+                        max_time = 30  # Thời gian tối đa cho mỗi cấp độ
+                        self.progress_bar_width = min(1, elapsed_time / max_time) * self.WIDTH  # Tính toán chiều rộng của thanh tiến trình
+                        pygame.draw.rect(self.window, self.WHITE, (0, self.HEIGHT - 20, self.progress_bar_width, 20))  # Vẽ thanh tiến trình
+                        if elapsed_time >= max_time:
                             stars = min(3, self.lives)
                             self.window.blit(self.background, (0, 0))
                             self.draw_text(f"You've earned {stars} stars!", self.FONT, self.WHITE, 400, 300)
@@ -94,23 +97,6 @@ class Game:
                             self.reset_game()
                     else:  # Nếu chưa bắt đầu chơi, gán giá trị cho start_time
                         self.start_time = pygame.time.get_ticks()
-=======
-                    self.window.blit(self.game_over_image, (0, 0))  # Hiển thị hình ảnh "Game Over"
-                    pygame.display.flip()  # Hiển thị ngay hình ảnh "Game Over"
-                    pygame.time.delay(1000)  # Delay 2 giây trước khi quay lại menu
-                    stars = 0  # Đặt số sao thành 0 khi game over
-                    self.menu.run(stars)  # Quay lại màn hình Menu
-                    self.game_over = False  # Reset trạng thái game over
-                    self.reset_game()  # Khởi tạo lại trò chơi
-                elif self.time_elapsed >= 30:
-                    stars = min(3, self.lives)  # Số sao tối đa là 3
-                    self.menu.display_stars(stars)  # Hiển thị màn hình số sao
-                    pygame.display.flip()
-                    pygame.time.delay(3000)  # Delay 3 giây trước khi trở lại menu
-                    self.menu.run(stars)  # Trở lại menu với số sao
-                    self.game_over = False  # Reset trạng thái game over
-                    self.reset_game()  # Khởi tạo lại trò chơi
->>>>>>> 308e90929afd57034f5ea0d0f41a5c0226ca5875
 
             pygame.display.flip()
 
@@ -121,3 +107,4 @@ class Game:
         self.all_sprites.add(self.mbappe)
         self.lives = 3
         self.start_time = 0  # Đặt lại thời gian bắt đầu khi reset game
+
