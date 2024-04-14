@@ -43,6 +43,7 @@ class Menu:
                     for i, level in enumerate(self.levels):
                         level_rect = pygame.Rect(50, 50 + 50 * i, 200, 40)
                         if level_rect.collidepoint(x, y):
+                            self.game.level = i + 1  # Cập nhật giá trị level từ 1 đến 10 tương ứng với vị trí của mỗi level trong danh sách
                             running = False
                             break
             
@@ -53,5 +54,3 @@ class Menu:
             self.clock.tick(60)
 
         return stars  # Trả về số sao đạt được để chuyển cho phương thức run của Game
-
-

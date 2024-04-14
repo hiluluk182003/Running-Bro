@@ -25,11 +25,24 @@ class Game:
         self.lives = 3
         self.game_over_image = pygame.image.load(r"images/GO.jpg").convert_alpha()
         self.game_over_image = pygame.transform.scale(self.game_over_image, (self.WIDTH, self.HEIGHT))
-        self.level_status = {}
         self.menu = Menu(self.window, self)
         self.game_over = False
         self.start_time = 0  # Thời gian bắt đầu chơi
         self.progress_bar_width = 0  # Chiều rộng của thanh tiến trình
+        self.level_speeds = {
+            1: 2,
+            2: 2.5,
+            3: 3,
+            4: 4,
+            5: 5,
+            6: 5.5,
+            7: 6,
+            8: 7,
+            9: 7.5,
+            10: 8,
+            # Thêm các cấp độ khác ở đây
+        }
+        self.level = 1  # Đặt cấp độ mặc định là 1 khi khởi tạo game
 
     def draw_text(self, text, font, color, x, y):
         text_surface = font.render(text, True, color)
@@ -53,7 +66,7 @@ class Game:
             
             if not self.game_over:
                 if len(self.letters_group) < 5:
-                    speed = len(self.level_status) + 2
+                    speed = self.level_speeds.get(self.level, 2)  # Sử dụng tốc độ mặc định là 2 nếu không có tốc độ được đặt cho cấp độ hiện tại
                     new_letter = Letter(self.mbappe.rect, speed, self.letters_group, self.all_sprites)
                     self.all_sprites.add(new_letter)
                     self.letters_group.add(new_letter)
@@ -71,13 +84,16 @@ class Game:
                 
                 self.draw_text(f"Lives: {self.lives}", self.FONT, self.WHITE, 10, 50)
                 
+                # Hiển thị cấp độ và tốc độ ở góc phải màn hình
+                self.draw_text(f"Level: {self.level}", self.FONT, self.WHITE, self.WIDTH - 150, 10)
+                self.draw_text(f"Speed: {self.level_speeds.get(self.level, 2)}", self.FONT, self.WHITE, self.WIDTH - 150, 50)
+                
                 if self.game_over:
                     self.window.blit(self.game_over_image, (0, 0))
                     pygame.display.flip()
                     pygame.time.delay(1000)
                     stars = 0
                     self.menu.run(stars)
-                    self.game_over = False
                     self.reset_game()
                 else:
                     if self.start_time != 0:  # Chỉ tính thời gian khi đã bắt đầu chơi
@@ -93,7 +109,6 @@ class Game:
                             pygame.display.flip()
                             pygame.time.delay(3000)
                             self.menu.run(stars)
-                            self.game_over = False
                             self.reset_game()
                     else:  # Nếu chưa bắt đầu chơi, gán giá trị cho start_time
                         self.start_time = pygame.time.get_ticks()
@@ -107,4 +122,5 @@ class Game:
         self.all_sprites.add(self.mbappe)
         self.lives = 3
         self.start_time = 0  # Đặt lại thời gian bắt đầu khi reset game
+        self.game_over = False
 
