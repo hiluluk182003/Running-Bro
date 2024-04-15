@@ -33,13 +33,13 @@ class Game:
             1: 2,
             2: 2.5,
             3: 3,
-            4: 4,
-            5: 5,
-            6: 5.5,
-            7: 6,
-            8: 7,
-            9: 7.5,
-            10: 8,
+            4: 3.5,
+            5: 4,
+            6: 4.5,
+            7: 5,
+            8: 5.5,
+            9: 6,
+            10: 7,
             # Thêm các cấp độ khác ở đây
         }
         self.level = 1  # Đặt cấp độ mặc định là 1 khi khởi tạo game
@@ -53,7 +53,6 @@ class Game:
         running = True
         while running:
             dt = self.clock.tick(60) / 1000
-            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -67,7 +66,7 @@ class Game:
             if not self.game_over:
                 if len(self.letters_group) < 5:
                     speed = self.level_speeds.get(self.level, 2)  # Sử dụng tốc độ mặc định là 2 nếu không có tốc độ được đặt cho cấp độ hiện tại
-                    new_letter = Letter(self.mbappe.rect, speed, self.letters_group, self.all_sprites)
+                    new_letter = Letter(self.mbappe.rect, speed, self.letters_group, self.all_sprites, self.level)
                     self.all_sprites.add(new_letter)
                     self.letters_group.add(new_letter)
 
@@ -116,6 +115,12 @@ class Game:
             pygame.display.flip()
 
     def reset_game(self):
+        # Reset các thuộc tính liên quan đến việc đếm số lần xuất hiện của chữ màu đỏ và xanh
+        Letter.red_count_global = 0
+        Letter.green_count_global = 0
+        Letter.green_last_spawn_time = 0
+        Letter.red_last_spawn_time = 0
+
         self.all_sprites.empty()
         self.letters_group.empty()
         self.mbappe.rect.topleft = (50, 390)
@@ -123,4 +128,3 @@ class Game:
         self.lives = 3
         self.start_time = 0  # Đặt lại thời gian bắt đầu khi reset game
         self.game_over = False
-
