@@ -59,6 +59,8 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     for letter in self.letters_group:
                         if event.unicode.lower() == letter.letter.lower():
+                            if letter.color == "green":
+                                self.slow_speed()  # Gọi phương thức slow_speed() khi gõ đúng chữ xanh lá
                             self.letters_group.remove(letter)
                             self.all_sprites.remove(letter)
                             break
@@ -128,3 +130,9 @@ class Game:
         self.lives = 3
         self.start_time = 0  # Đặt lại thời gian bắt đầu khi reset game
         self.game_over = False
+
+    def slow_speed(self):
+        for letter in self.letters_group:
+            if letter.color != "green":
+                letter.speed = 1
+                letter.last_green_typed_time = pygame.time.get_ticks()
