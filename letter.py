@@ -34,11 +34,11 @@ class Letter(pygame.sprite.Sprite):
             green_probability = 0
 
         current_time = pygame.time.get_ticks()
-        if Letter.red_last_spawn_time + 5000 < current_time and random.random() < red_probability:
+        if Letter.red_last_spawn_time + 8000 < current_time and random.random() < red_probability:
             self.color = "red"
             Letter.red_count_global += 1
             Letter.red_last_spawn_time = current_time
-        elif Letter.green_last_spawn_time + 5000 < current_time and random.random() < green_probability:
+        elif Letter.green_last_spawn_time + 8000 < current_time and random.random() < green_probability:
             self.color = "green"
             Letter.green_count_global += 1
             Letter.green_last_spawn_time = current_time
@@ -48,6 +48,7 @@ class Letter(pygame.sprite.Sprite):
         self.image = self.font.render(self.letter, True, self.colors[self.color])
         self.rect = self.image.get_rect(midbottom=(1000, random.choice([400, 480, 560])))
         self.spacing = 20
+
 
     def update(self):
         self.rect.x -= self.speed

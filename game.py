@@ -29,6 +29,9 @@ class Game:
         self.game_over = False
         self.start_time = 0  # Thời gian bắt đầu chơi
         self.progress_bar_width = 0  # Chiều rộng của thanh tiến trình
+        # Load hình ảnh hoặc gif cho hiệu ứng nổ
+        self.explosion_image = pygame.image.load(r"images/explode.gif")
+        self.explosion_rect = self.explosion_image.get_rect()
         self.level_speeds = {
             1: 2,
             2: 2.5,
@@ -61,6 +64,10 @@ class Game:
                         if event.unicode.lower() == letter.letter.lower():
                             if letter.color == "green":
                                 self.slow_speed()  # Gọi phương thức slow_speed() khi gõ đúng chữ xanh lá
+                            self.letters_group.remove(letter)
+                            self.all_sprites.remove(letter)
+                            if letter.color == "red":
+                                self.explode(letter)  # Gọi phương thức explode() khi gõ đúng chữ đỏ
                             self.letters_group.remove(letter)
                             self.all_sprites.remove(letter)
                             break
@@ -136,3 +143,15 @@ class Game:
             if letter.color != "green":
                 letter.speed = 1
                 letter.last_green_typed_time = pygame.time.get_ticks()
+    def explode(self, letter):
+            # Đặt vị trí hiệu ứng nổ ở vị trí của chữ đỏ và phát nổ
+            self.explosion_rect.center = letter.rect.center
+            self.window.blit(self.explosion_image, self.explosion_rect)
+            pygame.display.flip()
+            pygame.time.delay(100)  # Delay  hiệu ứng nổ hoàn thành
+            
+            # Xóa chữ đỏ và tất cả các chữ khác
+            self.letters_group.empty()
+            self.all_sprites.empty()
+            self.mbappe.rect.topleft = (50, 390)
+            self.all_sprites.add(self.mbappe)

@@ -1,6 +1,5 @@
 import pygame
 import sys
-
 class Menu:
     def __init__(self, screen, game):
         self.screen = screen
@@ -12,6 +11,9 @@ class Menu:
         self.FONT = pygame.font.SysFont(None, 36)
         self.STAR_IMAGE = pygame.image.load(r'images/star.png')
         self.clock = pygame.time.Clock()
+        self.back_button_img = pygame.image.load(r'images/backbutton.png')  # Load hình ảnh cho nút Back
+        self.back_button_img = pygame.transform.scale(self.back_button_img, (60, 50))
+        self.back_button_rect = self.back_button_img.get_rect(topleft=(50, 0))
         self.levels = [
             {"name": "Level 1"},
             {"name": "Level 2"},
@@ -34,6 +36,7 @@ class Menu:
         running = True
         while running:
             self.screen.blit(self.BG, (0, 0))
+            self.screen.blit(self.back_button_img, self.back_button_rect)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
