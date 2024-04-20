@@ -1,5 +1,6 @@
 import pygame
 import sys
+
 class Menu:
     def __init__(self, screen, game):
         self.screen = screen
@@ -30,7 +31,7 @@ class Menu:
         text_rect = text_surface.get_rect(topleft=(x, y))
         self.screen.blit(text_surface, text_rect)
 
-    def run(self, stars=0):
+    def run(self, stars_per_level):
         running = True
         while running:
             self.screen.blit(self.BG, (0, 0))
@@ -43,26 +44,25 @@ class Menu:
                     for i, level in enumerate(self.levels):
                         level_rect = pygame.Rect(50, 50 + 50 * i, 200, 40)
                         if level_rect.collidepoint(x, y):
-                            self.game.level = i + 1  # Cập nhật giá trị level từ 1 đến 10 tương ứng với vị trí của mỗi level trong danh sách
+                            self.game.level = i + 1
                             running = False
                             break
-            # Kiểm tra nếu nhấn vào nút Load
-                    if self.load_button_rect.collidepoint(x, y):
-                        self.game.load_game()  # Gọi phương thức load_game từ Game
-                        print("Số sao đã tải:", stars)
-                    # Kiểm tra nếu nhấn vào nút Save
-                    elif self.save_button_rect.collidepoint(x, y):
-                        self.game.save_game(stars,0)  # Gọi phương thức save_game từ Game
-           
+                        # Kiểm tra nếu nhấn vào nút Load
+                        if self.load_button_rect.collidepoint(x, y):
+                            self.game.load_game()  # Gọi phương thức load_game từ Game
+                            print("Số sao đã tải:", stars)
+                        # Kiểm tra nếu nhấn vào nút Save
+                        elif self.save_button_rect.collidepoint(x, y):
+                            self.game.save_game(stars,0)  # Gọi phương thức save_game từ Game
             for i, level in enumerate(self.levels):
-                self.draw_text(level["name"], self.FONT, self.WHITE, 50, 50 + 50 * i)
-                   
-                    # Tạo rect cho nút Load và nút Save
+                level_name = level["name"]
+                stars = stars_per_level[i] if i < len(stars_per_level) else 0  # Số sao tương ứng với cấp độ
+                self.draw_text(f"{level_name} - Star: {stars}", self.FONT, self.WHITE, 50, 50 + 50 * i)
             self.load_button_rect = pygame.Rect(450, 320, 100, 40)
-            self.save_button_rect = pygame.Rect(450, 260, 100, 40)
+            self.save_button_rect = pygame.Rect(450, 260, 100, 40)       
             self.draw_text("Load", self.bigFONT, self.WHITE, 450, 320)
             self.draw_text("Save", self.bigFONT, self.WHITE, 450, 260)
             pygame.display.flip()
             self.clock.tick(60)
 
-        return stars  # Trả về số sao đạt được để chuyển cho phương thức run của Game
+        return stars_per_level

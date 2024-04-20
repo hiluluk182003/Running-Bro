@@ -1,7 +1,9 @@
 import pygame
 import sys
-from game import *
-class MainMenu:
+from game import Game
+from menu import Menu
+
+class Monitor:
     def __init__(self, screen, game):
         self.screen = screen
         self.game = game
@@ -26,16 +28,15 @@ class MainMenu:
                     x, y = pygame.mouse.get_pos()
                     if self.play_rect.collidepoint(x, y):
                         running = False
-                        self.game.menu.run()  # Start the game after selecting a level from the menu
+                        self.stars_per_level = self.game.menu.run(self.game.stars_per_level)  # Pass stars_per_level from Game
             pygame.display.flip()
             self.clock.tick(60)
-
 
 def main():
     pygame.init()
     game = Game()
     screen = pygame.display.set_mode((1000, 700))
-    main_menu = MainMenu(screen, game)
+    main_menu = Monitor(screen, game)
     main_menu.run()
     game.run()
     pygame.quit()
