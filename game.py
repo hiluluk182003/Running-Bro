@@ -3,7 +3,8 @@ from pygame.sprite import Group
 from character import Character
 from letter import Letter
 from menu import Menu
-
+import os
+import pickle
 class Game:
     def __init__(self):
         self.WIDTH = 1000
@@ -155,3 +156,26 @@ class Game:
             self.all_sprites.empty()
             self.mbappe.rect.topleft = (50, 390)
             self.all_sprites.add(self.mbappe)
+    def save_game(self, stars, score):
+        game_state = {
+            'level': self.level,
+            'lives': self.lives,
+            'stars': stars,
+            'score': score,
+        }
+        save_path = os.path.join('D:\\code\\Running Bro\\savegame', 'game_state.pkl')
+        with open(save_path, 'wb') as file:
+            pickle.dump(game_state, file)
+        print('Da luu')
+    def load_game(self):
+        save_path = os.path.join('D:\\code\\Running Bro\\savegame', 'game_state.pkl')
+        try:
+            with open(save_path, 'rb') as file:
+                game_state = pickle.load(file)
+            self.level = game_state['level']
+            self.lives = game_state['lives']
+            stars = game_state['stars']
+            score = game_state['score']
+            return stars, score
+        except FileNotFoundError:
+            print("No saved game found.")

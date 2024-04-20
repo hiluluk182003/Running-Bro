@@ -19,7 +19,6 @@ class MainMenu:
         while running:
             self.screen.blit(self.BG, (0, 0))
             self.screen.blit(self.play_button, self.play_rect)
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -29,6 +28,5 @@ class MainMenu:
                     if self.play_rect.collidepoint(x, y):
                         running = False
                         self.game.menu.run()
-
             pygame.display.flip()
             self.clock.tick(60)

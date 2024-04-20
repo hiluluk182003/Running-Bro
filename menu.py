@@ -9,11 +9,9 @@ class Menu:
         self.BG = pygame.image.load(r'images/background.jpg')
         self.WHITE = (255, 255, 255)
         self.FONT = pygame.font.SysFont(None, 36)
+        self.bigFONT = pygame.font.SysFont(None, 60)
         self.STAR_IMAGE = pygame.image.load(r'images/star.png')
         self.clock = pygame.time.Clock()
-        self.back_button_img = pygame.image.load(r'images/backbutton.png')  # Load hình ảnh cho nút Back
-        self.back_button_img = pygame.transform.scale(self.back_button_img, (60, 50))
-        self.back_button_rect = self.back_button_img.get_rect(topleft=(50, 0))
         self.levels = [
             {"name": "Level 1"},
             {"name": "Level 2"},
@@ -36,7 +34,6 @@ class Menu:
         running = True
         while running:
             self.screen.blit(self.BG, (0, 0))
-            self.screen.blit(self.back_button_img, self.back_button_rect)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -49,10 +46,22 @@ class Menu:
                             self.game.level = i + 1  # Cập nhật giá trị level từ 1 đến 10 tương ứng với vị trí của mỗi level trong danh sách
                             running = False
                             break
-            
+            # Kiểm tra nếu nhấn vào nút Load
+                    if self.load_button_rect.collidepoint(x, y):
+                        self.game.load_game()  # Gọi phương thức load_game từ Game
+                        print("Số sao đã tải:", stars)
+                    # Kiểm tra nếu nhấn vào nút Save
+                    elif self.save_button_rect.collidepoint(x, y):
+                        self.game.save_game(stars,0)  # Gọi phương thức save_game từ Game
+           
             for i, level in enumerate(self.levels):
                 self.draw_text(level["name"], self.FONT, self.WHITE, 50, 50 + 50 * i)
-
+                   
+                    # Tạo rect cho nút Load và nút Save
+            self.load_button_rect = pygame.Rect(450, 320, 100, 40)
+            self.save_button_rect = pygame.Rect(450, 260, 100, 40)
+            self.draw_text("Load", self.bigFONT, self.WHITE, 450, 320)
+            self.draw_text("Save", self.bigFONT, self.WHITE, 450, 260)
             pygame.display.flip()
             self.clock.tick(60)
 
