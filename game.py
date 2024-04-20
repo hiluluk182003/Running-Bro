@@ -154,23 +154,29 @@ class Game:
         self.all_sprites.add(self.mbappe)
 
     def save_game(self):
+    # Tạo dictionary chứa trạng thái của game
         game_state = {
             'level': self.level,
             'lives': self.lives,
             'stars_per_level': self.stars_per_level,  # Lưu trạng thái số sao đạt được cho mỗi cấp độ
         }
-        save_path = os.path.join('savegame', 'game_state.pkl')
+        # Tạo đường dẫn đến file savegame/game_state.pkl
+        save_path = os.path.join('D:\\code\\Running Bro\\savegame', 'game_state.pkl')
+        # Mở file và lưu trạng thái của game vào file
         with open(save_path, 'wb') as file:
             pickle.dump(game_state, file)
         print('Đã lưu')
 
     def load_game(self):
-        save_path = os.path.join('savegame', 'game_state.pkl')
+        save_path = os.path.join('D:\\code\\Running Bro\\savegame', 'game_state.pkl')
         try:
             with open(save_path, 'rb') as file:
                 game_state = pickle.load(file)
             self.level = game_state['level']
             self.lives = game_state['lives']
-            self.stars_per_level = game_state['stars_per_level']  # Load lại số sao đạt được cho mỗi cấp độ
+            self.stars_per_level = game_state.get('stars_per_level', [0] * 10)  # Load lại số sao đạt được cho mỗi cấp độ
+            self.menu.run(self.stars_per_level)  # Thay đổi menu ngay sau khi load game
         except FileNotFoundError:
             print("Không tìm thấy trò chơi đã lưu.")
+
+

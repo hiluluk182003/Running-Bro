@@ -48,12 +48,12 @@ class Menu:
                             running = False
                             break
                         # Kiểm tra nếu nhấn vào nút Load
-                        if self.load_button_rect.collidepoint(x, y):
+                    if self.load_button_rect.collidepoint(x, y):
                             self.game.load_game()  # Gọi phương thức load_game từ Game
                             print("Số sao đã tải:", stars)
                         # Kiểm tra nếu nhấn vào nút Save
-                        elif self.save_button_rect.collidepoint(x, y):
-                            self.game.save_game(stars,0)  # Gọi phương thức save_game từ Game
+                    elif self.save_button_rect.collidepoint(x, y):
+                            self.game.save_game()  # Gọi phương thức save_game từ Game
             for i, level in enumerate(self.levels):
                 level_name = level["name"]
                 stars = stars_per_level[i] if i < len(stars_per_level) else 0  # Số sao tương ứng với cấp độ
