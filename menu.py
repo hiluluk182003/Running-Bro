@@ -1,6 +1,6 @@
 import pygame
 import sys
-
+from AI import *
 class Menu:
     def __init__(self, screen, game):
         self.screen = screen
@@ -9,6 +9,7 @@ class Menu:
         self.HEIGHT = screen.get_height()
         self.BG = pygame.image.load(r'images/background.jpg')
         self.WHITE = (255, 255, 255)
+        self.GRAY = (150, 150, 150)
         self.FONT = pygame.font.SysFont(None, 36)
         self.bigFONT = pygame.font.SysFont(None, 60)
         self.STAR_IMAGE = pygame.image.load(r'images/star.png')
@@ -24,6 +25,7 @@ class Menu:
             {"name": "Level 8"},
             {"name": "Level 9"},
             {"name": "Level 10"},
+            {"name": "Special!!!"},  # Đặt tên cấp độ đặc biệt
         ]
  
     def draw_text(self, text, font, color, x, y):
@@ -32,8 +34,8 @@ class Menu:
         self.screen.blit(text_surface, text_rect)
 
     def run(self, stars_per_level):
-        running = True
-        while running:
+        special_unlocked = self.check_special_unlocked(stars_per_level)  # Kiểm tra trạng thái mở khóa của Special level
+        while True:
             self.screen.blit(self.BG, (0, 0))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -44,25 +46,37 @@ class Menu:
                     for i, level in enumerate(self.levels):
                         level_rect = pygame.Rect(50, 50 + 50 * i, 200, 40)
                         if level_rect.collidepoint(x, y):
-                            self.game.level = i + 1
-                            running = False
-                            break
-                        # Kiểm tra nếu nhấn vào nút Load
+                            if level["name"] == "Special!!!" and not special_unlocked:
+                                continue  # Bỏ qua việc chọn Special level nếu chưa mở khóa
+                            else:
+                                self.game.level = i + 1
+                                return stars_per_level  # Trả về stars_per_level sau khi chọn level
                     if self.load_button_rect.collidepoint(x, y):
-                            self.game.load_game()  # Gọi phương thức load_game từ Game
-                            print("Số sao đã tải:", stars)
-                        # Kiểm tra nếu nhấn vào nút Save
+                        self.game.load_game()
+                        # Cập nhật lại stars_per_level sau khi load game
+                        stars_per_level = self.game.stars_per_level
                     elif self.save_button_rect.collidepoint(x, y):
-                            self.game.save_game()  # Gọi phương thức save_game từ Game
+                        self.game.save_game()
+                    elif self.AI_button.collidepoint(x, y):
+                        # Gọi chức năng AutoPlay khi nhấp vào nút AutoPlay
+                        pass
             for i, level in enumerate(self.levels):
                 level_name = level["name"]
-                stars = stars_per_level[i] if i < len(stars_per_level) else 0  # Số sao tương ứng với cấp độ
-                self.draw_text(f"{level_name} - Star: {stars}", self.FONT, self.WHITE, 50, 50 + 50 * i)
+                stars = stars_per_level[i] if i < len(stars_per_level) else 0
+                color = self.WHITE if special_unlocked or level_name != "Special!!!" else self.GRAY  # Chọn màu sắc
+                self.draw_text(f"{level_name} - Star: {stars}", self.FONT, color, 50, 50 + 50 * i)
             self.load_button_rect = pygame.Rect(450, 320, 100, 40)
-            self.save_button_rect = pygame.Rect(450, 260, 100, 40)       
+            self.save_button_rect = pygame.Rect(450, 260, 100, 40)
             self.draw_text("Load", self.bigFONT, self.WHITE, 450, 320)
             self.draw_text("Save", self.bigFONT, self.WHITE, 450, 260)
+            self.AI_button = pygame.Rect(450, 380, 100, 40)
+            self.draw_text("AutoPlay", self.bigFONT, self.WHITE, 450, 380)
             pygame.display.flip()
             self.clock.tick(60)
 
-        return stars_per_level
+    
+    def check_special_unlocked(self, stars_per_level):
+        # Kiểm tra điều kiện để mở cấp độ đặc biệt
+        completed_levels = len([stars for stars in stars_per_level if stars == 3])
+        return completed_levels >= 10  # Mở cấp độ đặc biệt nếu đã hoàn thành 10 level với mỗi level đạt 3 sao
+    
