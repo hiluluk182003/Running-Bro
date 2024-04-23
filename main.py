@@ -1,8 +1,6 @@
 import pygame
 import sys
 from game import Game
-from menu import Menu
-
 class Monitor:
     def __init__(self, screen, game):
         self.screen = screen

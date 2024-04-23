@@ -5,7 +5,6 @@ from letter import Letter
 from menu import Menu
 import os
 import pickle
-
 class Game:
     def __init__(self):
         self.WIDTH = 1000
@@ -47,16 +46,14 @@ class Game:
         }
         self.level = 1
         self.stars_per_level = [0] * 10  # Khởi tạo số sao đạt được cho mỗi cấp độ
-
     def draw_text(self, text, font, color, x, y):
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect(topleft=(x, y))
         self.window.blit(text_surface, text_rect)
-
     def run(self):
         running = True
         while running:
-            self.clock.tick(60) / 1000
+            self.clock.tick(60) 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -87,25 +84,21 @@ class Game:
                         self.game_over = True
 
                 self.all_sprites.update()
-
                 self.window.blit(self.background, (0, 0))
                 self.all_sprites.draw(self.window)
-                
                 self.draw_text(f"Lives: {self.lives}", self.FONT, self.WHITE, 10, 50)
-                
                 self.draw_text(f"Level: {self.level}", self.FONT, self.WHITE, self.WIDTH - 150, 10)
                 self.draw_text(f"Speed: {self.level_speeds.get(self.level, 2)}", self.FONT, self.WHITE, self.WIDTH - 150, 50)
-                
+                '''Xử lý khi thua'''
                 if self.game_over:
                     self.window.blit(self.game_over_image, (0, 0))
                     pygame.display.flip()
                     pygame.time.delay(1000)
-                    self.menu.run(self.stars_per_level)  # Truyền số sao đạt được cho mỗi cấp độ vào menu
                     self.reset_game()
                 else:
                     if self.start_time != 0:
-                        current_time = pygame.time.get_ticks()
-                        elapsed_time = (current_time - self.start_time) / 1000
+                        current_time = pygame.time.get_ticks() #Thời gian từ khi mở game
+                        elapsed_time = (current_time - self.start_time) / 1000 # Thời gian trong màn hình game
                         max_time = 30
                         self.progress_bar_width = min(1, elapsed_time / max_time) * self.WIDTH
                         pygame.draw.rect(self.window, self.WHITE, (0, self.HEIGHT - 20, self.progress_bar_width, 20))
@@ -116,12 +109,12 @@ class Game:
                             self.draw_text(f"You've earned {stars} stars!", self.FONT, self.WHITE, 400, 300)
                             pygame.display.flip()
                             pygame.time.delay(3000)
-                            self.menu.run(self.stars_per_level)  # Truyền số sao đạt được cho mỗi cấp độ vào menu
                             self.reset_game()
                     else:
                         self.start_time = pygame.time.get_ticks()
 
             pygame.display.flip()
+
 
     def reset_game(self):
         Letter.red_count_global = 0 
@@ -135,7 +128,7 @@ class Game:
         self.lives = 3
         self.start_time = 0
         self.game_over = False
-
+        self.menu.run(self.stars_per_level)  # Truyền số sao đạt được cho mỗi cấp độ vào menu
     def slow_speed(self):
         for letter in self.letters_group:
             if letter.color != "green":
@@ -180,15 +173,13 @@ class Game:
             self.level = game_state['level']
             self.lives = game_state['lives']
             self.stars_per_level = game_state.get('stars_per_level', [0] * 10)  # Load lại số sao đạt được cho mỗi cấp độ
+            
+            # Reset lại trò chơi
+            self.reset_game()
+            
             print("Số sao đã tải:", self.stars_per_level)  # Thêm dòng này để kiểm tra dữ liệu đã tải
             # Cập nhật dữ liệu stars_per_level trên menu
             self.menu.stars_per_level = self.stars_per_level
             self.menu.run(self.stars_per_level)  # Thay đổi menu ngay sau khi load game
         except FileNotFoundError:
             print("Không tìm thấy trò chơi đã lưu.")
-
-
-
-
-
-

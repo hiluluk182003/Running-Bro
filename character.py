@@ -10,5 +10,6 @@ class Character(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(50, 390))
         self.all_sprites = all_sprites
 
-    def update(self):
-        pass
+    def get_position(self):
+        return self.rect.topleft
+
