@@ -14,7 +14,6 @@ class Menu:
         self.FONT = pygame.font.SysFont(None, 36)
         self.bigFONT = pygame.font.SysFont(None, 60)
         self.clock = pygame.time.Clock()
-        self.auto_play = False  # Thêm thuộc tính để đánh dấu chế độ autoplay
         self.levels = [
             {"name": "Level 1"},
             {"name": "Level 2"},
@@ -33,8 +32,6 @@ class Menu:
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect(topleft=(x, y))
         self.screen.blit(text_surface, text_rect)
-    def set_auto_play(self, value):
-                self.auto_play = value
     def run(self, stars_per_level):
         special_unlocked = self.check_special_unlocked(stars_per_level)  # Kiểm tra trạng thái mở khóa của Special level
         while True:
@@ -52,10 +49,6 @@ class Menu:
                                 continue  # Bỏ qua việc chọn Special level nếu chưa mở khóa
                             else:
                                 self.game.level = i + 1
-                                if self.auto_play:
-                                    return  # Trả về mà không chạy trò chơi
-                                else:
-                                    self.game.run()  # Chạy trò chơi sau khi chọn cấp độ
                                 return stars_per_level  # Trả về stars_per_level sau khi chọn level
                     if self.load_button_rect.collidepoint(x, y):
                         self.game.load_game()
@@ -65,7 +58,7 @@ class Menu:
                         self.game.save_game()
                     elif self.AI_button.collidepoint(x, y):
                         # Gọi chức năng AutoPlay khi nhấp vào nút AutoPlay
-                        ai = AutoPlay(self.game, stars_per_level, self.auto_play)
+                        ai = AutoPlay(self.game, stars_per_level)
                         ai.auto_play_level()
                         return stars_per_level
             for i, level in enumerate(self.levels):

@@ -174,9 +174,6 @@ class Game:
             self.lives = game_state['lives']
             self.stars_per_level = game_state.get('stars_per_level', [0] * 10)  # Load lại số sao đạt được cho mỗi cấp độ
             
-            # Reset lại trò chơi
-            self.reset_game()
-            
             print("Số sao đã tải:", self.stars_per_level)  # Thêm dòng này để kiểm tra dữ liệu đã tải
             # Cập nhật dữ liệu stars_per_level trên menu
             self.menu.stars_per_level = self.stars_per_level

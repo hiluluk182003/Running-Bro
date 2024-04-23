@@ -1,10 +1,9 @@
 import random
 
 class AutoPlay:
-    def __init__(self, game, stars_per_level, auto_play):
+    def __init__(self, game, stars_per_level):
         self.game = game
         self.stars_per_level = stars_per_level
-        self.auto_play = auto_play  # Nhận giá trị auto_play từ Menu
 
     def auto_play_level(self):
         # Tìm và chọn một cấp độ có số sao ít hơn 3
