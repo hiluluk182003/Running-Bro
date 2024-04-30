@@ -5,6 +5,7 @@ from letter import Letter
 from menu import Menu
 import os
 import pickle
+from autoplay import AutoPlay
 class Game:
     def __init__(self):
         self.WIDTH = 1000
@@ -129,6 +130,7 @@ class Game:
         self.start_time = 0
         self.game_over = False
         self.menu.run(self.stars_per_level)  # Truyền số sao đạt được cho mỗi cấp độ vào menu
+        self.running = False  # Dừng luồng tự động gõ phím khi kết thúc trò chơi
     def slow_speed(self):
         for letter in self.letters_group:
             if letter.color != "green":
@@ -180,3 +182,13 @@ class Game:
             self.menu.run(self.stars_per_level)  # Thay đổi menu ngay sau khi load game
         except FileNotFoundError:
             print("Không tìm thấy trò chơi đã lưu.")
+    def handle_auto_typing(self, key):
+            for letter in self.letters_group:
+                if key.lower() == letter.letter.lower():
+                    if letter.color == "green":
+                        self.slow_speed()
+                    self.letters_group.remove(letter)
+                    self.all_sprites.remove(letter)
+                    if letter.color == "red":
+                        self.explode(letter)
+                    break
