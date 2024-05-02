@@ -10,7 +10,7 @@ class Game:
     def __init__(self):
         self.WIDTH = 1000
         self.HEIGHT = 700
-        self.BLACK = (0, 0, 0)
+        self.GRAY = (150, 150, 150)
         self.WHITE = (255, 255, 255)
         self.FONT = pygame.font.SysFont(None, 36)
         self.window = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
@@ -47,6 +47,7 @@ class Game:
         }
         self.level = 1
         self.stars_per_level = [0] * 10  # Khởi tạo số sao đạt được cho mỗi cấp độ
+        self.soundlife=pygame.mixer.Sound(r'Sound/life.mp3')
     def draw_text(self, text, font, color, x, y):
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect(topleft=(x, y))
@@ -66,7 +67,12 @@ class Game:
                             self.letters_group.remove(letter)
                             self.all_sprites.remove(letter)
                             if letter.color == "red":
+                                self.soundredkill = pygame.mixer.Sound(r'Sound/boom.mp3')
+                                self.soundredkill.play()
                                 self.explode(letter)
+                            if letter.color == "white":
+                                self.soundwhitekill = pygame.mixer.Sound(r'Sound/kill.mp3')
+                                self.soundwhitekill.play() 
                             self.letters_group.remove(letter)
                             self.all_sprites.remove(letter)
                             break
@@ -80,8 +86,11 @@ class Game:
 
                 hits = pygame.sprite.spritecollide(self.mbappe, self.letters_group, True)
                 if hits:
+                    self.soundlife.play()
                     self.lives -= 1
                     if self.lives <= 0:
+                        self.soundover = pygame.mixer.Sound(r'Sound/gameover.mp3')
+                        self.soundover.play()
                         self.game_over = True
 
                 self.all_sprites.update()
@@ -94,7 +103,7 @@ class Game:
                 if self.game_over:
                     self.window.blit(self.game_over_image, (0, 0))
                     pygame.display.flip()
-                    pygame.time.delay(1000)
+                    pygame.time.delay(3000)
                     self.reset_game()
                 else:
                     if self.start_time != 0:
@@ -175,13 +184,20 @@ class Game:
             self.level = game_state['level']
             self.lives = game_state['lives']
             self.stars_per_level = game_state.get('stars_per_level', [0] * 10)  # Load lại số sao đạt được cho mỗi cấp độ
-            
+
             print("Số sao đã tải:", self.stars_per_level)  # Thêm dòng này để kiểm tra dữ liệu đã tải
+
             # Cập nhật dữ liệu stars_per_level trên menu
             self.menu.stars_per_level = self.stars_per_level
-            self.menu.run(self.stars_per_level)  # Thay đổi menu ngay sau khi load game
+            
+            # Kiểm tra mở khóa special level
+            self.special_unlocked = self.menu.check_special_unlocked(self.stars_per_level)
+            print("Trạng thái mở khóa special level sau khi cập nhật:", self.special_unlocked)
+
         except FileNotFoundError:
             print("Không tìm thấy trò chơi đã lưu.")
+
+
     def handle_auto_typing(self, key):
             for letter in self.letters_group:
                 if key.lower() == letter.letter.lower():

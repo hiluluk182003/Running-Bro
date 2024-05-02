@@ -54,6 +54,8 @@ class Menu:
                         self.game.load_game()
                         # Cập nhật lại stars_per_level sau khi load game
                         stars_per_level = self.game.stars_per_level
+                        # Cập nhật lại trạng thái mở khóa special level sau khi load game
+                        special_unlocked = self.check_special_unlocked(stars_per_level)
                     elif self.save_button_rect.collidepoint(x, y):
                         self.game.save_game()
                     elif self.AI_button.collidepoint(x, y):
@@ -75,7 +77,9 @@ class Menu:
             pygame.display.flip()
             self.clock.tick(60)
 
+
     def check_special_unlocked(self, stars_per_level):
         # Kiểm tra điều kiện để mở cấp độ đặc biệt
+        print('hehe')
         completed_levels = len([stars for stars in stars_per_level if stars == 3])
         return completed_levels >= 10  # Mở cấp độ đặc biệt nếu đã hoàn thành 10 level với mỗi level đạt 3 sao

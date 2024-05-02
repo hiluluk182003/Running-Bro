@@ -2,8 +2,6 @@ import threading
 import string
 import random
 import time
-import ctypes
-
 class AutoPlay:
     def __init__(self, game, stars_per_level):
         self.game = game
