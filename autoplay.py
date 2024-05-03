@@ -16,7 +16,7 @@ class AutoPlay:
             self.auto_type_characters()
 
     def find_level_with_less_than_three_stars(self):
-        available_levels = [i + 1 for i, stars in enumerate(self.stars_per_level) if stars < 3]
+        available_levels = [i + 1 for i, stars in enumerate(self.stars_per_level[:-1]) if stars < 3]
         if available_levels:
             return random.choice(available_levels)
         else:

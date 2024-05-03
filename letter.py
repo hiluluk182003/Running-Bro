@@ -29,6 +29,9 @@ class Letter(pygame.sprite.Sprite):
         elif 3 <= self.level <= 6:
             red_probability = 0.15
             green_probability = 0.15
+        elif self.level > 10:
+            red_probability = 0.05
+            green_probability = 0.05
         else:
             red_probability = 0
             green_probability = 0

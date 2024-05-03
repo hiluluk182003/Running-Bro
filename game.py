@@ -5,7 +5,7 @@ from letter import Letter
 from menu import Menu
 import os
 import pickle
-from autoplay import AutoPlay
+import random
 class Game:
     def __init__(self):
         self.WIDTH = 1000
@@ -46,8 +46,11 @@ class Game:
             10: 7,
         }
         self.level = 1
-        self.stars_per_level = [0] * 10  # Khởi tạo số sao đạt được cho mỗi cấp độ
+        self.stars_per_level = [0] * 11  # Khởi tạo số sao đạt được cho mỗi cấp độ
         self.soundlife=pygame.mixer.Sound(r'Sound/life.mp3')
+        self.boss = pygame.image.load(r"images/boss.gif")
+        self.boss = pygame.transform.scale(self.boss, (300, 200))
+        self.rectboss = self.boss.get_rect(topleft=(695, 390))
     def draw_text(self, text, font, color, x, y):
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect(topleft=(x, y))
@@ -63,6 +66,8 @@ class Game:
                     for letter in self.letters_group:
                         if event.unicode.lower() == letter.letter.lower():
                             if letter.color == "green":
+                                self.soundgreenkill = pygame.mixer.Sound(r'Sound/slow.mp3')
+                                self.soundgreenkill.play()
                                 self.slow_speed()
                             self.letters_group.remove(letter)
                             self.all_sprites.remove(letter)
@@ -79,7 +84,10 @@ class Game:
             
             if not self.game_over:
                 if len(self.letters_group) < 5:
-                    speed = self.level_speeds.get(self.level, 2)
+                    if self.level == 11:
+                        speed = random.uniform(1, 3)   
+                    else:
+                        speed = self.level_speeds.get(self.level, 2)
                     new_letter = Letter(self.mbappe.rect, speed, self.letters_group, self.all_sprites, self.level)
                     self.all_sprites.add(new_letter)
                     self.letters_group.add(new_letter)
@@ -98,7 +106,15 @@ class Game:
                 self.all_sprites.draw(self.window)
                 self.draw_text(f"Lives: {self.lives}", self.FONT, self.WHITE, 10, 50)
                 self.draw_text(f"Level: {self.level}", self.FONT, self.WHITE, self.WIDTH - 150, 10)
-                self.draw_text(f"Speed: {self.level_speeds.get(self.level, 2)}", self.FONT, self.WHITE, self.WIDTH - 150, 50)
+                if self.level != 11:
+                    self.draw_text(f"Speed: {self.level_speeds.get(self.level, 2)}", self.FONT, self.WHITE, self.WIDTH - 150, 50)
+                else:
+                    self.window.blit(self.boss, self.rectboss)
+                    for letter in self.letters_group:
+                        letter_surface = letter.image
+                        position = letter.rect.topleft
+                        rotation = random.choice([60, 90, 180])
+                        self.transform_letter(letter_surface, position, rotation)
                 '''Xử lý khi thua'''
                 if self.game_over:
                     self.window.blit(self.game_over_image, (0, 0))
@@ -116,6 +132,8 @@ class Game:
                             stars = min(3, self.lives)
                             self.stars_per_level[self.level - 1] = stars  # Cập nhật số sao đạt được cho mỗi cấp độ
                             self.window.blit(self.background, (0, 0))
+                            self.soundwin = pygame.mixer.Sound(r'Sound/win.mp3')
+                            self.soundwin.play()
                             self.draw_text(f"You've earned {stars} stars!", self.FONT, self.WHITE, 400, 300)
                             pygame.display.flip()
                             pygame.time.delay(3000)
@@ -183,7 +201,7 @@ class Game:
                 game_state = pickle.load(file)
             self.level = game_state['level']
             self.lives = game_state['lives']
-            self.stars_per_level = game_state.get('stars_per_level', [0] * 10)  # Load lại số sao đạt được cho mỗi cấp độ
+            self.stars_per_level = game_state.get('stars_per_level', [0] * 11)  # Load lại số sao đạt được cho mỗi cấp độ
 
             print("Số sao đã tải:", self.stars_per_level)  # Thêm dòng này để kiểm tra dữ liệu đã tải
 
@@ -208,3 +226,21 @@ class Game:
                     if letter.color == "red":
                         self.explode(letter)
                     break
+
+    def transform_letter(self, letter_surface, position, rotation, rotate_speed=0.3):
+        # Xoay chữ cái
+        if rotation == 'flip':
+            letter_surface = pygame.transform.flip(letter_surface, False, True)
+        else:
+            letter_surface = pygame.transform.rotate(letter_surface, rotation * rotate_speed)
+        
+        # Vị trí hiển thị chữ cái
+        x, y = position
+        if rotation == 90:
+            x += letter_surface.get_height() + 20
+        elif rotation == 180 or rotation == 'flip':
+            y -= letter_surface.get_width() + 20
+        else:
+            y -= 20
+
+        self.window.blit(letter_surface, (x, y))
