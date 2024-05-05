@@ -3,7 +3,31 @@ import sys
 from autoplay import AutoPlay
 
 class Menu:
+    """
+    Lớp Menu đại diện cho menu trong trò chơi.
+
+    Attributes:
+        screen (Surface): Màn hình trò chơi.
+        game (Game): Đối tượng trò chơi.
+        WIDTH (int): Độ rộng của màn hình trò chơi.
+        HEIGHT (int): Độ cao của màn hình trò chơi.
+        BG (Surface): Hình nền của menu.
+        WHITE (tuple): Màu trắng.
+        GRAY (tuple): Màu xám.
+        hover (tuple): Màu sắc khi nút được hover qua.
+        FONT (Font): Font chữ cho văn bản.
+        bigFONT (Font): Font chữ lớn cho văn bản tiêu đề.
+        clock (Clock): Đồng hồ để kiểm soát tốc độ khung hình.
+        levels (list): Danh sách các cấp độ trong trò chơi.
+    """
     def __init__(self, screen, game):
+        """
+        Khởi tạo menu.
+
+        Args:
+            screen (Surface): Màn hình trò chơi.
+            game (Game): Đối tượng trò chơi.
+        """
         self.screen = screen
         self.game = game
         self.WIDTH = screen.get_width()
@@ -34,6 +58,12 @@ class Menu:
         text_rect = text_surface.get_rect(topleft=(x, y))
         self.screen.blit(text_surface, text_rect)
     def run(self, stars_per_level):
+        """
+        Chạy menu.
+
+        Args:
+            stars_per_level (list): Số sao đạt được cho mỗi cấp độ.
+        """
         special_unlocked = self.check_special_unlocked(stars_per_level)
         while True:
             self.screen.blit(self.BG, (0, 0))
@@ -74,7 +104,7 @@ class Menu:
                 if level_rect.collidepoint(pygame.mouse.get_pos()):
                     color = self.hover  # Màu sắc khi hover qua
                 self.draw_text(f"{level_name} - Star: {stars}", self.FONT, color, 50, 50 + 50 * i)
-            # Vẽ các nút khác và kiểm tra hover tương tự
+
             self.load_button_rect = pygame.Rect(450, 320, 100, 40)
             self.save_button_rect = pygame.Rect(450, 260, 100, 40)
             self.AI_button = pygame.Rect(450, 380, 100, 40)

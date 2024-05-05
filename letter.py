@@ -2,6 +2,16 @@ import pygame
 import random
 
 class Letter(pygame.sprite.Sprite):
+    """
+    Lớp Letter đại diện cho chữ cái xuất hiện trong trò chơi.
+
+    Attributes:
+        red_count_global (int): Số lượng chữ cái màu đỏ đã xuất hiện trong trò chơi.
+        green_count_global (int): Số lượng chữ cái màu xanh đã xuất hiện trong trò chơi.
+        green_last_spawn_time (int): Thời điểm cuối cùng chữ cái màu xanh xuất hiện.
+        red_last_spawn_time (int): Thời điểm cuối cùng chữ cái màu đỏ xuất hiện.
+        last_green_typed_time (int): Thời điểm cuối cùng chữ cái màu xanh được gõ.
+    """
     red_count_global = 0
     green_count_global = 0
     green_last_spawn_time = 0
@@ -9,6 +19,16 @@ class Letter(pygame.sprite.Sprite):
     last_green_typed_time = 0
 
     def __init__(self, mbappe_rect, speed, letters_group, all_sprites, level):
+        """
+        Khởi tạo đối tượng chữ cái.
+
+        Args:
+            mbappe_rect (Rect): Hình chữ nhật của nhân vật chính.
+            speed (int): Tốc độ di chuyển của chữ cái.
+            letters_group (Group): Nhóm chứa tất cả các sprite của chữ cái.
+            all_sprites (Group): Nhóm chứa tất cả các sprite trong trò chơi.
+            level (int): Cấp độ hiện tại của trò chơi.
+        """
         super().__init__()
         self.letters_group = letters_group
         self.all_sprites = all_sprites
@@ -23,6 +43,7 @@ class Letter(pygame.sprite.Sprite):
         }
         self.level = level
 
+        # Xác định xác suất xuất hiện chữ cái màu đỏ và xanh dựa trên cấp độ
         if 7 <= self.level <= 10:
             red_probability = 0.1
             green_probability = 0.1
@@ -37,6 +58,7 @@ class Letter(pygame.sprite.Sprite):
             green_probability = 0
 
         current_time = pygame.time.get_ticks()
+        # Kiểm tra xem có phải là chữ cái màu đỏ hay màu xanh dựa trên xác suất và thời gian
         if Letter.red_last_spawn_time + 8000 < current_time and random.random() < red_probability:
             self.color = "red"
             Letter.red_count_global += 1
@@ -52,8 +74,12 @@ class Letter(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(1000, random.choice([400, 480, 560])))
         self.spacing = 20
 
-
     def update(self):
+        """
+        Cập nhật trạng thái của chữ cái sau mỗi frame.
+
+        Di chuyển chữ cái sang trái và kiểm tra va chạm với chữ cái khác.
+        """
         self.rect.x -= self.speed
         if self.rect.right < 0:
             self.kill()

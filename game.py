@@ -7,6 +7,35 @@ import os
 import pickle
 import random
 class Game:
+    """
+    Lớp Game đại diện cho trò chơi Running Bro.
+
+    Attributes:
+        WIDTH (int): Chiều rộng của cửa sổ trò chơi.
+        HEIGHT (int): Chiều cao của cửa sổ trò chơi.
+        GRAY (tuple): Màu xám dùng cho giao diện.
+        WHITE (tuple): Màu trắng dùng cho giao diện.
+        FONT (Font): Font chữ cho văn bản hiển thị trong trò chơi.
+        window (Surface): Cửa sổ trò chơi.
+        clock (Clock): Đồng hồ để điều chỉnh tốc độ khung hình.
+        all_sprites (Group): Nhóm chứa tất cả các sprite trong trò chơi.
+        letters_group (Group): Nhóm chứa tất cả các sprite của chữ cái.
+        background (Surface): Hình nền của trò chơi.
+        mbappe (Character): Nhân vật chính trong trò chơi.
+        lives (int): Số mạng còn lại của người chơi.
+        game_over_image (Surface): Hình ảnh hiển thị khi trò chơi kết thúc.
+        menu (Menu): Đối tượng menu trong trò chơi.
+        game_over (bool): Cờ chỉ trạng thái kết thúc của trò chơi.
+        start_time (int): Thời điểm bắt đầu của trò chơi.
+        progress_bar_width (int): Độ rộng thanh tiến trình.
+        explosion_image (Surface): Hình ảnh vụ nổ.
+        level_speeds (dict): Tốc độ của từng cấp độ.
+        level (int): Cấp độ hiện tại của trò chơi.
+        stars_per_level (list): Số sao đạt được cho mỗi cấp độ.
+        soundlife (Sound): Âm thanh khi mất mạng.
+        boss (Surface): Hình ảnh của quái vật.
+        rectboss (Rect): Vùng chứa hình ảnh quái vật.
+    """
     def __init__(self):
         self.WIDTH = 1000
         self.HEIGHT = 700
@@ -62,7 +91,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                elif event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN: #Xử lý gõ phím
                     for letter in self.letters_group:
                         if event.unicode.lower() == letter.letter.lower():
                             if letter.color == "green":
@@ -82,10 +111,10 @@ class Game:
                             self.all_sprites.remove(letter)
                             break
             
-            if not self.game_over:
-                if len(self.letters_group) < 5:
+            if not self.game_over: 
+                if len(self.letters_group) < 5: #Khởi tạo các chữ cái
                     if self.level == 11:
-                        speed = random.uniform(1, 3)   
+                        speed = random.uniform(2.5, 4)   
                     else:
                         speed = self.level_speeds.get(self.level, 2)
                     new_letter = Letter(self.mbappe.rect, speed, self.letters_group, self.all_sprites, self.level)
@@ -93,7 +122,7 @@ class Game:
                     self.letters_group.add(new_letter)
 
                 hits = pygame.sprite.spritecollide(self.mbappe, self.letters_group, True)
-                if hits:
+                if hits: # Xử lý khi người chơi va chạm với chữ cái
                     self.soundlife.play()
                     self.lives -= 1
                     if self.lives <= 0:
@@ -108,7 +137,7 @@ class Game:
                 self.draw_text(f"Level: {self.level}", self.FONT, self.WHITE, self.WIDTH - 150, 10)
                 if self.level != 11:
                     self.draw_text(f"Speed: {self.level_speeds.get(self.level, 2)}", self.FONT, self.WHITE, self.WIDTH - 150, 50)
-                else:
+                else:   #Tạo màn đánh boss
                     self.window.blit(self.boss, self.rectboss)
                     for letter in self.letters_group:
                         letter_surface = letter.image
@@ -121,7 +150,7 @@ class Game:
                     pygame.display.flip()
                     pygame.time.delay(3000)
                     self.reset_game()
-                else:
+                else:  #Khi hoàn thành màn chơi
                     if self.start_time != 0:
                         current_time = pygame.time.get_ticks() #Thời gian từ khi mở game
                         elapsed_time = (current_time - self.start_time) / 1000 # Thời gian trong màn hình game
@@ -143,7 +172,7 @@ class Game:
 
             pygame.display.flip()
 
-
+    """Hàm reset để khi hoàn thành màn có thể chọn màn khác"""
     def reset_game(self):
         Letter.red_count_global = 0 
         Letter.green_count_global = 0 
@@ -158,12 +187,13 @@ class Game:
         self.game_over = False
         self.menu.run(self.stars_per_level)  # Truyền số sao đạt được cho mỗi cấp độ vào menu
         self.running = False  # Dừng luồng tự động gõ phím khi kết thúc trò chơi
+    """Giảm tốc độ của chữ cái."""
     def slow_speed(self):
         for letter in self.letters_group:
             if letter.color != "green":
                 letter.speed = 1
                 letter.last_green_typed_time = pygame.time.get_ticks()
-
+    """Hiển thị hiệu ứng vụ nổ khi chữ cái màu đỏ bị tiêu diệt."""
     def explode(self, letter):
         self.explosion_rect.center = letter.rect.center
         self.window.blit(self.explosion_image, self.explosion_rect)
@@ -217,6 +247,7 @@ class Game:
 
 
     def handle_auto_typing(self, key):
+            """Xử lý việc tự động gõ phím."""
             for letter in self.letters_group:
                 if key.lower() == letter.letter.lower():
                     if letter.color == "green":
@@ -228,7 +259,7 @@ class Game:
                     break
 
     def transform_letter(self, letter_surface, position, rotation, rotate_speed=0.3):
-        # Xoay chữ cái
+        # Xoay chữ cái để tạo độ khó cho màn đánh boss
         if rotation == 'flip':
             letter_surface = pygame.transform.flip(letter_surface, False, True)
         else:
