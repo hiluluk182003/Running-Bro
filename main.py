@@ -1,8 +1,8 @@
 import pygame
 import sys
 from game import Game
-"""Tạo màn hình khi khởi chạy game"""
 class Monitor:
+    """Tạo màn hình khi khởi chạy game"""
     def __init__(self, screen, game):
         self.screen = screen
         self.game = game
@@ -30,8 +30,8 @@ class Monitor:
                         self.stars_per_level = self.game.menu.run(self.game.stars_per_level)  # Pass stars_per_level from Game
             pygame.display.flip()
             self.clock.tick(60)
-"""Hàm chạy game"""
 def main():
+    """Hàm chạy game"""
     pygame.init()
     game = Game()
     screen = pygame.display.set_mode((1000, 700))

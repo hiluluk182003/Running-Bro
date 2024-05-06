@@ -81,10 +81,18 @@ class Game:
         self.boss = pygame.transform.scale(self.boss, (300, 200))
         self.rectboss = self.boss.get_rect(topleft=(695, 390))
     def draw_text(self, text, font, color, x, y):
+        """Hàm vẽ chữ"""
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect(topleft=(x, y))
         self.window.blit(text_surface, text_rect)
     def run(self):
+        """
+        Hàm chứa gameplay
+        Gồm các sự kiện gõ phím
+        Vẽ thanh tiến độ game
+        Xem game over hay chưa
+        Sound effect
+        """
         running = True
         while running:
             self.clock.tick(60) 
@@ -144,8 +152,7 @@ class Game:
                         position = letter.rect.topleft
                         rotation = random.choice([60, 90, 180])
                         self.transform_letter(letter_surface, position, rotation)
-                '''Xử lý khi thua'''
-                if self.game_over:
+                if self.game_over: #Xử lí khi thua
                     self.window.blit(self.game_over_image, (0, 0))
                     pygame.display.flip()
                     pygame.time.delay(3000)
@@ -172,8 +179,8 @@ class Game:
 
             pygame.display.flip()
 
-    """Hàm reset để khi hoàn thành màn có thể chọn màn khác"""
     def reset_game(self):
+        """Hàm reset để khi hoàn thành màn có thể chọn màn khác"""
         Letter.red_count_global = 0 
         Letter.green_count_global = 0 
         Letter.green_last_spawn_time = 0 
@@ -187,26 +194,25 @@ class Game:
         self.game_over = False
         self.menu.run(self.stars_per_level)  # Truyền số sao đạt được cho mỗi cấp độ vào menu
         self.running = False  # Dừng luồng tự động gõ phím khi kết thúc trò chơi
-    """Giảm tốc độ của chữ cái."""
     def slow_speed(self):
+        """Giảm tốc độ của chữ cái."""
         for letter in self.letters_group:
             if letter.color != "green":
                 letter.speed = 1
                 letter.last_green_typed_time = pygame.time.get_ticks()
-    """Hiển thị hiệu ứng vụ nổ khi chữ cái màu đỏ bị tiêu diệt."""
     def explode(self, letter):
+        """Hiển thị hiệu ứng vụ nổ khi chữ cái màu đỏ bị tiêu diệt."""
         self.explosion_rect.center = letter.rect.center
         self.window.blit(self.explosion_image, self.explosion_rect)
         pygame.display.flip()
         pygame.time.delay(100)
-        
         self.letters_group.empty()
         self.all_sprites.empty()
         self.mbappe.rect.topleft = (50, 390)
         self.all_sprites.add(self.mbappe)
 
     def save_game(self):
-    # Tạo dictionary chứa trạng thái của game
+        """Tạo dictionary chứa trạng thái của game"""
         game_state = {
             'level': self.level,
             'lives': self.lives,
@@ -224,6 +230,7 @@ class Game:
         self.menu.stars_per_level = self.stars_per_level
 
     def load_game(self):
+        """Tải trạng thái game"""
         save_directory = "D:\\code\\Running Bro\\savegame"
         save_path = os.path.join(save_directory, 'game_state.pkl')
         try:
@@ -259,7 +266,7 @@ class Game:
                     break
 
     def transform_letter(self, letter_surface, position, rotation, rotate_speed=0.3):
-        # Xoay chữ cái để tạo độ khó cho màn đánh boss
+        """Xoay chữ cái để tạo độ khó cho màn đánh boss"""
         if rotation == 'flip':
             letter_surface = pygame.transform.flip(letter_surface, False, True)
         else:

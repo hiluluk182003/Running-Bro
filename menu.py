@@ -118,6 +118,6 @@ class Menu:
 
 
     def check_special_unlocked(self, stars_per_level):
-        # Kiểm tra điều kiện để mở cấp độ đặc biệt
+        """Kiểm tra điều kiện để mở cấp độ đặc biệt"""
         completed_levels = len([stars for stars in stars_per_level if stars == 3])
         return completed_levels >= 10  # Mở cấp độ đặc biệt nếu đã hoàn thành 10 level với mỗi level đạt 3 sao
